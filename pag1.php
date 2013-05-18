@@ -12,7 +12,7 @@
 	$rnes = $_POST["rnes"];
 ?>
 
-<div style="text-align:center;"><form action="pag2-b.php" method="POST">
+<div style="text-align:center;"><form action="pag2.php" method="POST">
     <p>¿Cuál es el objetivo de la función? 
 	<select name="objetivo">
 	  <option value="Max">Maximizar</option>
