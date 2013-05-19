@@ -114,7 +114,7 @@
 		$mat_Cs = count($mat[$var]);
 	}
 
-	function CrearTablaFormulas($metodo, $vbles, $rnes, $fo, $restricciones){
+	function CrearTablaFormulas(&$tablas, $metodo, $vbles, $rnes, $fo, $restricciones){
 		$tabla = '<table border="0" align="center">';
 			$tabla.= '<tr>';
 				$tabla.= '<td>';
@@ -216,12 +216,13 @@
 			$tabla.= '</tr>';
 		$tabla.= '</table>';
 	
-	echo $tabla;
+	AgregarNuevaTabla($tablas, $tabla);
 	}
 
 	function AgregarNuevaTabla(&$tablas, $tabla){
 		$id = count($tablas);
 		$tablas[$id] = $tabla;
+		//echo $tablas[$id];
 	}
 	
 ?>
@@ -238,10 +239,16 @@
 	CargarMatrisFO($fo, $_POST, $vbles, $rnes);
 	CargarMatrisRnes($restricciones, $_POST, $vbles, $rnes);
 	CargarMatrisDeCalculos($mat, $mat_Fs, $mat_Cs, $rnes, $vbles, $restricciones);
-	CrearTablaFormulas($metodo, $vbles, $rnes, $fo, $restricciones);
+	CrearTablaFormulas($tablas, $metodo, $vbles, $rnes, $fo, $restricciones);
+	
+	//Muestro las tablas.
+	for($i=0; $i<count($tablas); $i++){
+		echo $tablas[$i];
+	}
 
+	$var = count($tablas);
 	echo "<br><pre>";
-//	echo $mat_Cs;
+	echo $var;
 	print_r($restricciones);
 	echo "</pre>";
 
