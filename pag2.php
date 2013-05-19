@@ -22,6 +22,7 @@
 	global $fo, $restricciones;
 	global $mat, $mat_Fs, $mat_Cs;
 	global $tablas;
+	global $BCBs;
 	
 	$tablas = array();
 	
@@ -114,6 +115,15 @@
 		$mat_Cs = count($mat[$var]);
 	}
 
+	function CargarMatrisBasesCBs(&$BCBs, $rnes){
+		for($j=1; $j<=$rnes; $j++){
+				$var = "lbl";
+				$val_lbl = "S".$j;
+				$BCBs[$var][$j] = $val_lbl;
+				$BCBs[$val_lbl] = 0;
+			}
+		}
+	
 	function CrearTablaFormulas(&$tablas, $metodo, $vbles, $rnes, $fo, $restricciones){
 		$tabla = '<table border="0" align="center">';
 			$tabla.= '<tr>';
@@ -239,8 +249,13 @@
 	CargarMatrisFO($fo, $_POST, $vbles, $rnes);
 	CargarMatrisRnes($restricciones, $_POST, $vbles, $rnes);
 	CargarMatrisDeCalculos($mat, $mat_Fs, $mat_Cs, $rnes, $vbles, $restricciones);
+	CargarMatrisBasesCBs($BCBs, $rnes);
+	
+	
 	CrearTablaFormulas($tablas, $metodo, $vbles, $rnes, $fo, $restricciones);
 	
+
+
 	//Muestro las tablas.
 	for($i=0; $i<count($tablas); $i++){
 		echo $tablas[$i];
@@ -248,8 +263,8 @@
 
 	$var = count($tablas);
 	echo "<br><pre>";
-	echo $var;
-	print_r($restricciones);
+//	echo $var;
+	print_r($mat);
 	echo "</pre>";
 
 	?>
