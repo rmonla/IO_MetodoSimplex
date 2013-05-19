@@ -94,6 +94,26 @@
 		}
 	}
 
+	function CargarMatrisDeCalculos(&$mat, &$mat_Fs, &$mat_Cs, $rnes, $vbles, $restricciones){
+		for($j=1; $j<=$rnes; $j++){
+			$var_a = "a".$j;
+			for($i=1; $i<=$vbles; $i++){
+				$var_rnes = "X".$j.$i;
+				$mat[$var_a][$i] = $restricciones[$var_rnes];
+			}
+			for($m=1; $m<=$rnes; $m++){
+				$var_rnes = "S".$j.$m;
+				$mat[$var_a][$i] = $restricciones[$var_rnes];
+				$i++;
+			}
+			$var_rnes = "Y".$j;
+			$mat[$var_a][$i] = $restricciones[$var_rnes];
+		}
+		$var = "a1";
+		$mat_Fs = count($mat);
+		$mat_Cs = count($mat[$var]);
+	}
+
 	function CrearTablaFormulas($metodo, $vbles, $rnes, $fo, $restricciones){
 		$tabla = '<table border="0" align="center">';
 			$tabla.= '<tr>';
@@ -199,25 +219,11 @@
 	echo $tabla;
 	}
 
-	function IniciarMatrisDeCalculos(&$mat, &$mat_Fs, &$mat_Cs, $rnes, $vbles, $restricciones){
-		for($j=1; $j<=$rnes; $j++){
-			$var_a = "a".$j;
-			for($i=1; $i<=$vbles; $i++){
-				$var_rnes = "X".$j.$i;
-				$mat[$var_a][$i] = $restricciones[$var_rnes];
-			}
-			for($m=1; $m<=$rnes; $m++){
-				$var_rnes = "S".$j.$m;
-				$mat[$var_a][$i] = $restricciones[$var_rnes];
-				$i++;
-			}
-			$var_rnes = "Y".$j;
-			$mat[$var_a][$i] = $restricciones[$var_rnes];
-		}
-		$var = "a1";
-		$mat_Fs = count($mat);
-		$mat_Cs = count($mat[$var]);
+	function AgregarNuevaTabla(&$tablas, $tabla){
+		$id = count($tablas);
+		$tablas[$id] = $tabla;
 	}
+	
 ?>
 
 <?php   //Area de impresión. 
@@ -231,8 +237,8 @@
 	*/
 	CargarMatrisFO($fo, $_POST, $vbles, $rnes);
 	CargarMatrisRnes($restricciones, $_POST, $vbles, $rnes);
+	CargarMatrisDeCalculos($mat, $mat_Fs, $mat_Cs, $rnes, $vbles, $restricciones);
 	CrearTablaFormulas($metodo, $vbles, $rnes, $fo, $restricciones);
-	IniciarMatrisDeCalculos($mat, $mat_Fs, $mat_Cs, $rnes, $vbles, $restricciones);
 
 	echo "<br><pre>";
 //	echo $mat_Cs;
