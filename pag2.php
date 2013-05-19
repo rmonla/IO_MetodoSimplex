@@ -30,50 +30,6 @@
 	$rnes = $_POST["rnes"];
 	$metodo = $_POST["objetivo"];
 	
-	//Creo y cargo el array de las x y las s de la funcion objetivo.
-	$fo = array();
-	for($i=1; $i<=$vbles; $i++){  //Cargo las x.
-		$var = "lbl";
- 		$fo[$var][$i] = "X";
-		$var = "X".$i;
-		if(isset($_POST[$var])){
-			$valor = $_POST[$var];
-		}
-		$fo[$var] = $valor;
-	}
-	for($j=1; $j<=$rnes; $j++){  //Inicializo las s.	
-		$var = "lbl";
-		$fo[$var][$i] = "S";
-		$var = "S".$j;
-		$fo[$var] = "0";
-		$i++;
-	}
-
-	//Creo y cargo el array de las restricciones.
-	$restricciones = array();
-	for($j=1; $j<=$rnes; $j++){
-		for($i=1; $i<=$vbles; $i++){  //Cargo las a desde la POST
-			$var = "X".$j.$i;
-			if(isset($_POST[$var])){
-				$valor = $_POST[$var];
-			}
-			$restricciones[$var] = $valor;
-		}
-		for($i=1; $i<=$rnes; $i++){  //Inizializo las s.
-			$valor = "0";
-			$var = "S".$j.$i;
-			if($j == $i){
-				$valor = "1";
-			}
-			$restricciones[$var] = $valor;
-		}
-		$valor = "0";
-		$var = "Y".$j;
-		if(isset($_POST[$var])){
-			$valor = $_POST[$var];
-		}
-		$restricciones[$var] = $valor;
-	}
 	
 	/*
 	echo $vbles;
@@ -90,6 +46,54 @@
 ?>
 
 <?php   //Funciones
+	function CargarMatrisFO(&$fo, $_POST, $vbles, $rnes){
+		//Creo y cargo el array de las x y las s de la funcion objetivo.
+		for($i=1; $i<=$vbles; $i++){  //Cargo las x.
+			$var = "lbl";
+			$fo[$var][$i] = "X";
+			$var = "X".$i;
+			if(isset($_POST[$var])){
+				$valor = $_POST[$var];
+			}
+			$fo[$var] = $valor;
+		}
+		for($j=1; $j<=$rnes; $j++){  //Inicializo las s.	
+			$var = "lbl";
+			$fo[$var][$i] = "S";
+			$var = "S".$j;
+			$fo[$var] = "0";
+			$i++;
+		}
+	}
+	
+	function CargarMatrisRnes(&$restricciones, $_POST, $vbles, $rnes){
+		//Creo y cargo el array de las restricciones.
+		$restricciones = array();
+		for($j=1; $j<=$rnes; $j++){
+			for($i=1; $i<=$vbles; $i++){  //Cargo las a desde la POST
+				$var = "X".$j.$i;
+				if(isset($_POST[$var])){
+					$valor = $_POST[$var];
+				}
+				$restricciones[$var] = $valor;
+			}
+			for($i=1; $i<=$rnes; $i++){  //Inizializo las s.
+				$valor = "0";
+				$var = "S".$j.$i;
+				if($j == $i){
+					$valor = "1";
+				}
+				$restricciones[$var] = $valor;
+			}
+			$valor = "0";
+			$var = "Y".$j;
+			if(isset($_POST[$var])){
+				$valor = $_POST[$var];
+			}
+			$restricciones[$var] = $valor;
+		}
+	}
+
 	function CrearTablaFormulas($metodo, $vbles, $rnes, $fo, $restricciones){
 		$tabla = '<table border="0" align="center">';
 			$tabla.= '<tr>';
@@ -225,12 +229,14 @@
 		echo $tablas[$i];
 	}
 	*/
+	CargarMatrisFO($fo, $_POST, $vbles, $rnes);
+	CargarMatrisRnes($restricciones, $_POST, $vbles, $rnes);
 	CrearTablaFormulas($metodo, $vbles, $rnes, $fo, $restricciones);
 	IniciarMatrisDeCalculos($mat, $mat_Fs, $mat_Cs, $rnes, $vbles, $restricciones);
 
 	echo "<br><pre>";
-	echo $mat_Cs;
-//	print_r($mat);
+//	echo $mat_Cs;
+	print_r($restricciones);
 	echo "</pre>";
 
 	?>
