@@ -116,13 +116,25 @@
 	}
 
 	function CargarMatrisBasesCBs(&$BCBs, $rnes){
+		for($i=1; $i<=$rnes; $i++){
+				$var = "lbl";
+				$val_lbl = "S".$i;
+				$BCBs[$var][$i] = $val_lbl;
+				$BCBs[$val_lbl] = 0;
+			}
 		for($j=1; $j<=$rnes; $j++){
 				$var = "lbl";
-				$val_lbl = "S".$j;
-				$BCBs[$var][$j] = $val_lbl;
+				$val_lbl = "CB".$j;
+				$BCBs[$var][$i++] = $val_lbl;
 				$BCBs[$val_lbl] = 0;
 			}
 		}
+	
+	function AgregarNuevaTabla(&$tablas, $tabla){
+		$id = count($tablas);
+		$tablas[$id] = $tabla;
+		//echo $tablas[$id];
+	}
 	
 	function CrearTablaFormulas(&$tablas, $metodo, $vbles, $rnes, $fo, $restricciones){
 		$tabla = '<table border="0" align="center">';
@@ -229,12 +241,6 @@
 	AgregarNuevaTabla($tablas, $tabla);
 	}
 
-	function AgregarNuevaTabla(&$tablas, $tabla){
-		$id = count($tablas);
-		$tablas[$id] = $tabla;
-		//echo $tablas[$id];
-	}
-	
 ?>
 
 <?php   //Area de impresión. 
@@ -264,7 +270,7 @@
 	$var = count($tablas);
 	echo "<br><pre>";
 //	echo $var;
-	print_r($mat);
+	print_r($BCBs);
 	echo "</pre>";
 
 	?>
