@@ -22,7 +22,7 @@
 	global $fo, $restricciones;
 	global $mat, $mat_Fs, $mat_Cs;
 	global $tablas;
-	global $BCBs;
+	global $BCBs, $ztas, $cjzjs;
 	
 	$tablas = array();
 	
@@ -51,7 +51,7 @@
 		//Creo y cargo el array de las x y las s de la funcion objetivo.
 		for($i=1; $i<=$vbles; $i++){  //Cargo las x.
 			$var = "lbl";
-			$fo[$var][$i] = "X";
+			$fo[$var][$i] = "X".$i;
 			$var = "X".$i;
 			if(isset($_POST[$var])){
 				$valor = $_POST[$var];
@@ -60,7 +60,7 @@
 		}
 		for($j=1; $j<=$rnes; $j++){  //Inicializo las s.	
 			$var = "lbl";
-			$fo[$var][$i] = "S";
+			$fo[$var][$i] = "S".$j;
 			$var = "S".$j;
 			$fo[$var] = "0";
 			$i++;
@@ -128,7 +128,37 @@
 				$BCBs[$var][$i++] = $val_lbl;
 				$BCBs[$val_lbl] = 0;
 			}
+	
+	$BCBs["CB1"] = 1;
+	$BCBs["CB2"] = 1;
+	$BCBs["CB3"] = 1;
+
+	}
+	
+	function CalcularZtas(&$ztas, $BCBs, $mat, $mat_Fs, $mat_Cs){
+		for($j=1; $j<=$mat_Fs; $j++){
+			$var_cb = "CB".$j;
+			$var_a = "a".$j; 
+			for($i=1; $i<=$mat_Cs; $i++){
+				$var_z = "Z".$i;
+				//echo $var_z.' ( '.$ztas[$var_z].' ) + ('.$var_cb.' ( '.$BCBs[$var_cb].' ) * '.$var_a.$i.'( '.$mat[$var_a][$i].') ) = ';
+				$ztas[$var_z] = $ztas[$var_z] + ($BCBs[$var_cb] * $mat[$var_a][$i]);
+				//echo $ztas[$var_z].'<br>';
+			}
 		}
+	}
+
+	//Creo y cargo el array de czs las diferencias Cj-Zj.
+	function CalcularCjZjs(&$cjzjs, $ztas, $mat_Cs, $fo){
+		for($i=1; $i<=$mat_Cs; $i++){
+			$var_cjzj = "CZ".$i;
+			$var_z = "Z".$i;
+			$var_fo = $fo["lbl"][$i];
+			echo $var_fo .' ( '. $fo[$var_fo] .' ) - '. $var_z .'( '.$ztas[$var_z] .' ) = ';
+			$cjzjs[$var_cjzj] = $fo[$var_fo] - $ztas[$var_z];
+			echo $cjzjs[$var_cjzj].'<br>';
+		}
+	}
 	
 	function AgregarNuevaTabla(&$tablas, $tabla){
 		$id = count($tablas);
@@ -158,20 +188,17 @@
 										if ($i == 1) $signo = '';
 										$var = "lbl";
 										$var_lbl = $fo[$var][$i];
-										$var_vble = $var_lbl.$i;
-										$formula.= $signo. $fo[$var_vble] .' '.$var_lbl .'<sub>'. $i .'</sub>';
+										$formula.= $signo. $fo[$var_lbl] .' X<sub>'. $i .'</sub>';
 									}
 									$celdas.=$formula;
 								$celdas.='</td>';
 								//--Formula + Holguras
 								$celdas.='<td align="center">';
-								//$formula = $formula;
 									for ($j=1; $j<=$rnes; $j++){
 										$signo = ' + ';
 										$var = "lbl";
 										$var_lbl = $fo[$var][$i++];
-										$var_vble = $var_lbl.$j;
-										$formula.= $signo. $fo[$var_vble] .' '. $var_lbl .'<sub>'. $j .'</sub>';
+										$formula.= $signo.$fo[$var_lbl] .' S<sub>'. $j .'</sub>';
 									}
 									$celdas.=$formula;
 								$celdas.='</td>';
@@ -198,7 +225,7 @@
 									$celdas.='</td>';
 									//---Formula + Holguras
 									$celdas.='<td align="center">';
-										$formula.=' + S<sub>'. $j .'</sub>';
+										$formula.=' + 1 S<sub>'. $j .'</sub>';
 										$var = "Y".$j;
 										$formula.= ' = '. $restricciones[$var];
 										$celdas.= $formula;
@@ -256,22 +283,28 @@
 	CargarMatrisRnes($restricciones, $_POST, $vbles, $rnes);
 	CargarMatrisDeCalculos($mat, $mat_Fs, $mat_Cs, $rnes, $vbles, $restricciones);
 	CargarMatrisBasesCBs($BCBs, $rnes);
-	
+
+	CalcularZtas($ztas, $BCBs, $mat, $mat_Fs, $mat_Cs);	
+	CalcularCjZjs($cjzjs, $ztas, $mat_Cs, $fo);
 	
 	CrearTablaFormulas($tablas, $metodo, $vbles, $rnes, $fo, $restricciones);
 	
 
+	
+	//$var = count($tablas);
+
+	echo "<br><pre>";
+	//echo $rnes."<br>";
+	print_r($fo);
+	print_r($ztas);
+	print_r($cjzjs);
+	echo "</pre>";
 
 	//Muestro las tablas.
 	for($i=0; $i<count($tablas); $i++){
 		echo $tablas[$i];
 	}
 
-	$var = count($tablas);
-	echo "<br><pre>";
-//	echo $var;
-	print_r($BCBs);
-	echo "</pre>";
 
 	?>
 
