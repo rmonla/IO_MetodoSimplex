@@ -324,7 +324,7 @@
 	}
 
 	//Función que crea y arma la tabla calculada.
-	function CrearTablaCalculada($vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs, $BCBs, $mat, $ztas){
+	function CrearTablaCalculada($vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs, $BCBs, $mat, $ztas, $cjzjs, $titas){
 		//Formatos de td e imput.
 		$abro_td = '<td width="45"><div align="center">';
 		$cierro_td = '</div></td>';
@@ -365,6 +365,7 @@
 					}
 					$tabla.= $celdas;
 					$tabla.= '<th bgcolor="#999999">VLD</th>';
+					$tabla.= '<th bgcolor="#999999">&#1138;</th>';
 		$tabla.= '</tr>';
 				//Creo y armo las filas de calculos.
 				$filas = '';
@@ -372,8 +373,8 @@
 					$filas.= "<tr>";
 					
 					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
-					$var = "lbl".$j;
-					$filas.= $abro_td .' '. $BCBs[$var] .' '. $cierro_td; 
+					$var = "lbl";
+					$filas.= $abro_td .' '. $BCBs[$var][$j] .' '. $cierro_td; 
 					
 					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
 					$var = "CB".$j;
@@ -384,6 +385,10 @@
 						$var = "a".$j;
 						$filas.= $abro_td .' '. $mat[$var][$i] .' '. $cierro_td;
 					}
+
+					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
+					$var = "tita".$j;
+					$filas.= $abro_td .' '. $titas[$var] .' '. $cierro_td;
 					
 					$filas.= "</tr>";
 				}
@@ -403,8 +408,9 @@
 		$tabla.= '<tr>'
 					.'<th bgcolor="#999999">C<sub>j</sub> - Z<sub>j</sub> </th>';
 					$celdas ='';
+					$abro_td = '<td width="45"><div align="center">';
 					//Creo y armo las Cj-Zj.
-					for($i=1; $i<=count($cjzjs); $i++){
+					for($i=1; $i<count($cjzjs); $i++){
 						$var = "CZ".$i;
 						$celdas.= $abro_td .' '. $cjzjs[$var] .' '. $cierro_td;
 					}
@@ -440,7 +446,7 @@
 	CalcularTitas($titas, $pibot_col, $mat, $mat_Fs, $mat_Cs);
 	BuscarPibotFila($pibot_fila, $titas);
 	
-	$tabla = CrearTablaCalculada($vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs, $BCBs, $mat, $ztas);
+	$tabla = CrearTablaCalculada($vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs, $BCBs, $mat, $ztas, $cjzjs, $titas);
 	AgregarNuevaTabla($tablas, $tabla, "Tabla de Calculada Inicial");
 	//$var = count($tablas);
 
@@ -448,7 +454,7 @@
 	echo "<br><pre>";
 	//print_r($fo);
 	//print_r($ztas);
-	print_r($BCBs);
+	print_r($cjzjs);
 	echo "</pre>";
 
 	//Muestro las tablas.
