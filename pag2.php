@@ -324,7 +324,7 @@
 	}
 
 	//Función que crea y arma la tabla calculada.
-	function CrearTablaCalculada(&$tabla, $vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs){
+	function CrearTablaCalculada($vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs, $BCBs, $mat, $ztas){
 		//Formatos de td e imput.
 		$abro_td = '<td width="45"><div align="center">';
 		$cierro_td = '</div></td>';
@@ -371,17 +371,17 @@
 				for($j=1; $j<=$mat_Fs; $j++){
 					$filas.= "<tr>";
 					
-					$var = "b".$j;
 					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
-					$filas.= $abro_td .' '. $bases[$j] .' '. $cierro_td; 
+					$var = "lbl".$j;
+					$filas.= $abro_td .' '. $BCBs[$var] .' '. $cierro_td; 
 					
-					$var = "cb".$j;
 					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
-					$filas.= $abro_td .' '. $cbs[$var] .' '. $cierro_td;
+					$var = "CB".$j;
+					$filas.= $abro_td .' '. $BCBs[$var] .' '. $cierro_td;
 					
 					for($i=1; $i<=$mat_Cs; $i++){
-						$var = "a".$j;
 						$abro_td = ColorCelda($j, $i, $pibot_fila, $pibot_col);
+						$var = "a".$j;
 						$filas.= $abro_td .' '. $mat[$var][$i] .' '. $cierro_td;
 					}
 					
@@ -395,7 +395,7 @@
 					$celdas ='';
 					$abro_td = '<td width="45"><div align="center">';
 					for($i=1; $i<=count($ztas); $i++){
-						$var = "z".$i;
+						$var = "Z".$i;
 						$celdas.= $abro_td . $ztas[$var] . $cierro_td;
 					}
 					$tabla.= $celdas;
@@ -404,16 +404,15 @@
 					.'<th bgcolor="#999999">C<sub>j</sub> - Z<sub>j</sub> </th>';
 					$celdas ='';
 					//Creo y armo las Cj-Zj.
-					for($i=1; $i<=count($czs); $i++){
-						$var = "cz".$i;
-						$celdas.= $abro_td .' '. $czs[$var] .' '. $cierro_td;
+					for($i=1; $i<=count($cjzjs); $i++){
+						$var = "CZ".$i;
+						$celdas.= $abro_td .' '. $cjzjs[$var] .' '. $cierro_td;
 					}
 					$tabla.= $celdas;
 		$tabla.= '</tr>';
 		$tabla.= '</table>';
 		
-		$id = count($tabla)+ 1;
-		$tabla[$id] = $tabla;
+		return $tabla;
 	}
 
 
@@ -441,6 +440,8 @@
 	CalcularTitas($titas, $pibot_col, $mat, $mat_Fs, $mat_Cs);
 	BuscarPibotFila($pibot_fila, $titas);
 	
+	$tabla = CrearTablaCalculada($vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs, $BCBs, $mat, $ztas);
+	AgregarNuevaTabla($tablas, $tabla, "Tabla de Calculada Inicial");
 	//$var = count($tablas);
 
 	echo $pibot_fila."<br>";
