@@ -154,15 +154,15 @@
 			$var_cjzj = "CZ".$i;
 			$var_z = "Z".$i;
 			$var_fo = $fo["lbl"][$i];
-			echo $var_fo .' ( '. $fo[$var_fo] .' ) - '. $var_z .'( '.$ztas[$var_z] .' ) = ';
+			//echo $var_fo .' ( '. $fo[$var_fo] .' ) - '. $var_z .'( '.$ztas[$var_z] .' ) = ';
 			$cjzjs[$var_cjzj] = $fo[$var_fo] - $ztas[$var_z];
-			echo $cjzjs[$var_cjzj].'<br>';
+			//echo $cjzjs[$var_cjzj].'<br>';
 		}
 	}
 	
-	function AgregarNuevaTabla(&$tablas, $tabla){
+	function AgregarNuevaTabla(&$tablas, $tabla, $titulo){
 		$id = count($tablas);
-		$tablas[$id] = $tabla;
+		$tablas[$id] = '<h1 align="center">'. $titulo. '</h1>'. $tabla;;
 		//echo $tablas[$id];
 	}
 	
@@ -265,7 +265,7 @@
 			$tabla.= '</tr>';
 		$tabla.= '</table>';
 	
-	AgregarNuevaTabla($tablas, $tabla);
+	AgregarNuevaTabla($tablas, $tabla, "Tabla de Formulas");
 	}
 
 ?>
@@ -295,9 +295,9 @@
 
 	echo "<br><pre>";
 	//echo $rnes."<br>";
-	print_r($fo);
-	print_r($ztas);
-	print_r($cjzjs);
+	//print_r($fo);
+	//print_r($ztas);
+	//print_r($cjzjs);
 	echo "</pre>";
 
 	//Muestro las tablas.
