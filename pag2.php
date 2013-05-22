@@ -17,12 +17,13 @@
 	$body ='<body>';
 ?>
 
-<?php   //Inicializo Variables
+<?php   //Inicializo Variables  
 	global $vbles, $rnes, $metodo;
 	global $fo, $restricciones;
 	global $mat, $mat_Fs, $mat_Cs;
 	global $tablas;
 	global $BCBs, $ztas, $cjzjs;
+	global $pibot_col, $pibot_fila;
 	
 	$tablas = array();
 	
@@ -159,6 +160,23 @@
 			//echo $cjzjs[$var_cjzj].'<br>';
 		}
 	}
+
+	//Busco y guardo la columna del pibot.
+	function BuscarPibotCol(&$pibot_col, $cjzjs){
+		$valor_cz = $cjzjs["CZ1"];
+		$pibot_col = 0;
+		for($i=1; $i<=count($cjzjs); $i++){
+			$var = "CZ".$i;
+			if($cjzjs[$var] >= 0){
+				if($cjzjs[$var] >= $valor_cz){
+					$valor_cz = $cjzjs[$var];
+					$pibot_col = $i;	
+				}
+			}
+		}
+	}
+
+
 	
 	function AgregarNuevaTabla(&$tablas, $tabla, $titulo){
 		$id = count($tablas);
@@ -286,6 +304,7 @@
 
 	CalcularZtas($ztas, $BCBs, $mat, $mat_Fs, $mat_Cs);	
 	CalcularCjZjs($cjzjs, $ztas, $mat_Cs, $fo);
+	BuscarPibotCol($pibot_col, $cjzjs);
 	
 	CrearTablaFormulas($tablas, $metodo, $vbles, $rnes, $fo, $restricciones);
 	
@@ -294,10 +313,10 @@
 	//$var = count($tablas);
 
 	echo "<br><pre>";
-	//echo $rnes."<br>";
+	echo $pibot_col."<br>";
 	//print_r($fo);
 	//print_r($ztas);
-	//print_r($cjzjs);
+	print_r($cjzjs);
 	echo "</pre>";
 
 	//Muestro las tablas.
