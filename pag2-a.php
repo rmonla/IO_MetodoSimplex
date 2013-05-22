@@ -195,7 +195,7 @@
 	}
 		
 	//Función que crea y arma la tabla calculada.
-	function CrearTabla(&$tabla){
+	function CrearTablaCalculos(&$tabla){
 		//Formatos de td e imput.
 		$abro_td = '<td width="45"><div align="center">';
 		$cierro_td = '</div></td>';

@@ -24,6 +24,7 @@
 	global $tablas;
 	global $BCBs, $ztas, $cjzjs;
 	global $pibot_col, $pibot_fila;
+	global $titas;
 	
 	$tablas = array();
 	
@@ -121,7 +122,7 @@
 				$var = "lbl";
 				$val_lbl = "S".$i;
 				$BCBs[$var][$i] = $val_lbl;
-				$BCBs[$val_lbl] = 0;
+				//$BCBs[$val_lbl] = 0;
 			}
 		for($j=1; $j<=$rnes; $j++){
 				$var = "lbl";
@@ -176,7 +177,43 @@
 		}
 	}
 
+	//Calculo los coeficientes tita.
+	function CalcularTitas(&$titas, $pibot_col, $mat, $mat_Fs, $mat_Cs){
+		for($i=1; $i<=$mat_Fs; $i++){
+			$var = "a".$i;
+			$val_vld = $mat[$var][$mat_Cs];
+			$val_pb = $mat[$var][$pibot_col];
+			$var = "tita".$i;
+			$titas[$var] = "-1";
+			if($val_pb != 0){
+				$titas[$var] = $val_vld / $val_pb;	
+			}
+		}
+	}
 
+	//Busco y guardo la fila del pibot.
+	function BuscarPibotFila(&$pibot_fila, $titas){
+		//Busco la Fila.
+		$valor_tita = $titas["tita1"];
+		$pibot_fila = 0;
+		for($i=1; $i<=count($titas); $i++){
+			$var = "tita".$i;
+			if($titas[$var] <= $valor_tita and $titas[$var] != -1){
+				$valor_tita = $titas[$var];
+				$pibot_fila = $i;	
+			}
+		}
+	}
+
+	//Función que coloca el color a la celda segun pibot.
+	function ColorCelda($fila, $col, $pibot_fila, $pibot_col){
+		$color = '';
+		if($fila == $pibot_fila) $color = ' bgcolor="#00CCFF"';
+		if($col == $pibot_col) $color = ' bgcolor="#99FF00"';
+		if($fila == $pibot_fila and $col == $pibot_col) $color = ' bgcolor="#009933"';
+		$abro_td = '<td width="45"'. $color. '><div align="center">';
+		return $abro_td;
+	}
 	
 	function AgregarNuevaTabla(&$tablas, $tabla, $titulo){
 		$id = count($tablas);
@@ -286,6 +323,100 @@
 	AgregarNuevaTabla($tablas, $tabla, "Tabla de Formulas");
 	}
 
+	//Función que crea y arma la tabla calculada.
+	function CrearTablaCalculada(&$tabla, $vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs){
+		//Formatos de td e imput.
+		$abro_td = '<td width="45"><div align="center">';
+		$cierro_td = '</div></td>';
+		
+		//Comienzo a armar la tabla.
+		$tabla = 
+			'<table  border="1" align="center" cellpadding="8">'
+				.'<tr>'
+					.'<td colspan="2"></td>';
+					$celdas ='';
+					//lbl Variables x
+					for($i=1; $i<=$vbles; $i++){
+						$abro_td = ColorCelda(1, $i, $pibot_fila, $pibot_col);
+						$celdas.= $abro_td.' X<sub>'.$i.'</sub>'.$cierro_td;
+					}
+					//lbl Variables s
+					for($j=1; $j<=$rnes; $j++){
+						$abro_td = '<td width="45"><div align="center">';
+						$celdas.= $abro_td .'S<sub>'.$j.'</sub>'.$cierro_td;
+					}
+					$tabla.= $celdas;
+		$tabla.= '</tr>';
+		$tabla.= '<tr>'
+					.'<th bgcolor="#999999">Base</th>'
+					.'<th bgcolor="#999999">C<sub>B</sub></th>';
+					$celdas ='';
+					//Variables x
+					for($i=1; $i<=$vbles; $i++){
+						$var = "X".$i;
+						$abro_td = ColorCelda(1, $i, $pibot_fila, $pibot_col);
+						$celdas.= $abro_td .' '. $fo[$var] .' '. $cierro_td;
+					}
+					//Variables s
+					for($j=1; $j<=$rnes; $j++){
+						$var = "S".$i;
+						$abro_td = '<td width="45"><div align="center">';
+						$celdas.= $abro_td .' '. $fo[$var] .' '. $cierro_td;
+					}
+					$tabla.= $celdas;
+					$tabla.= '<th bgcolor="#999999">VLD</th>';
+		$tabla.= '</tr>';
+				//Creo y armo las filas de calculos.
+				$filas = '';
+				for($j=1; $j<=$mat_Fs; $j++){
+					$filas.= "<tr>";
+					
+					$var = "b".$j;
+					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
+					$filas.= $abro_td .' '. $bases[$j] .' '. $cierro_td; 
+					
+					$var = "cb".$j;
+					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
+					$filas.= $abro_td .' '. $cbs[$var] .' '. $cierro_td;
+					
+					for($i=1; $i<=$mat_Cs; $i++){
+						$var = "a".$j;
+						$abro_td = ColorCelda($j, $i, $pibot_fila, $pibot_col);
+						$filas.= $abro_td .' '. $mat[$var][$i] .' '. $cierro_td;
+					}
+					
+					$filas.= "</tr>";
+				}
+				$tabla.= $filas;
+		$tabla.= '<tr>'
+					.'<td rowspan="2"></td>'
+					.'<th bgcolor="#999999">Z<sub>j</sub></th>';
+					//Creo y armo las ztas.
+					$celdas ='';
+					$abro_td = '<td width="45"><div align="center">';
+					for($i=1; $i<=count($ztas); $i++){
+						$var = "z".$i;
+						$celdas.= $abro_td . $ztas[$var] . $cierro_td;
+					}
+					$tabla.= $celdas;
+		$tabla.= '</tr>';
+		$tabla.= '<tr>'
+					.'<th bgcolor="#999999">C<sub>j</sub> - Z<sub>j</sub> </th>';
+					$celdas ='';
+					//Creo y armo las Cj-Zj.
+					for($i=1; $i<=count($czs); $i++){
+						$var = "cz".$i;
+						$celdas.= $abro_td .' '. $czs[$var] .' '. $cierro_td;
+					}
+					$tabla.= $celdas;
+		$tabla.= '</tr>';
+		$tabla.= '</table>';
+		
+		$id = count($tabla)+ 1;
+		$tabla[$id] = $tabla;
+	}
+
+
 ?>
 
 <?php   //Area de impresión. 
@@ -302,21 +433,21 @@
 	CargarMatrisDeCalculos($mat, $mat_Fs, $mat_Cs, $rnes, $vbles, $restricciones);
 	CargarMatrisBasesCBs($BCBs, $rnes);
 
+	CrearTablaFormulas($tablas, $metodo, $vbles, $rnes, $fo, $restricciones);
+
 	CalcularZtas($ztas, $BCBs, $mat, $mat_Fs, $mat_Cs);	
 	CalcularCjZjs($cjzjs, $ztas, $mat_Cs, $fo);
 	BuscarPibotCol($pibot_col, $cjzjs);
-	
-	CrearTablaFormulas($tablas, $metodo, $vbles, $rnes, $fo, $restricciones);
-	
-
+	CalcularTitas($titas, $pibot_col, $mat, $mat_Fs, $mat_Cs);
+	BuscarPibotFila($pibot_fila, $titas);
 	
 	//$var = count($tablas);
 
+	echo $pibot_fila."<br>";
 	echo "<br><pre>";
-	echo $pibot_col."<br>";
 	//print_r($fo);
 	//print_r($ztas);
-	print_r($cjzjs);
+	print_r($BCBs);
 	echo "</pre>";
 
 	//Muestro las tablas.
