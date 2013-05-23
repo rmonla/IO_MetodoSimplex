@@ -39,7 +39,7 @@
 ?>
 
 <?php   //Funciones
-	function CargarMatrisFO($_POST){
+	function CargarMatrisFO(){
 		//Creo y cargo el array de las x y las s de la funcion objetivo.
 		for($i=1; $i<=$_SESSION['vbles']; $i++){  //Cargo las x.
 			$var = "lbl";
@@ -59,7 +59,7 @@
 		}
 	}
 	
-	function CargarMatrisRnes($_POST){
+	function CargarMatrisRnes(){
 		//Creo y cargo el array de las restricciones.
 		$_SESSION['matrnes'] = array();
 		for($j=1; $j<=$_SESSION['rnes']; $j++){
@@ -415,8 +415,8 @@
 ?>
 
 <?php   //Area de impresión. 
-	CargarMatrisFO($_POST);
-	CargarMatrisRnes($_POST);
+	CargarMatrisFO();
+	CargarMatrisRnes();
 	CargarMatrisDeCalculos();
 	CargarMatrisBasesCBs();
 
