@@ -359,7 +359,7 @@
 					}
 					//Variables s
 					for($j=1; $j<=$_SESSION['rnes']; $j++){
-						$var = "S".$i;
+						$var = "S".$j;
 						$abro_td = '<td width="45"><div align="center">';
 						$celdas.= $abro_td .' '. $_SESSION['fo'][$var] .' '. $cierro_td;
 					}
@@ -525,21 +525,21 @@
 		if ( ValorPibot() > 1){
 			CalcularValoresFilaPibot();
 			$tabla = CrearTablaCalculada();
-			AgregarNuevaTabla($tabla, "Calculo fila pibot");
+			AgregarNuevaTabla($tabla, "Calculo valores de la fila pibot");
 		}else{
 			AgregarNuevaTabla('', "<h2>No se calculó fila por valor pibot = 1 </h2>");
 		}
 		CalcularValoresNoPibot();
 		$tabla = CrearTablaCalculada();
-		AgregarNuevaTabla($tabla, "Calculo valores distintos al pibot");
+		AgregarNuevaTabla($tabla, "Calculo componentes fuera de la fila y columna del pibot");
 		EntraSale();
 		$tabla = CrearTablaCalculada();
-		AgregarNuevaTabla($tabla, "Agrego las variables que entran");
+		AgregarNuevaTabla($tabla, "Ingreso en la tabla las variables que entran");
 		CalcularZtas();	
 		CalcularCjZjs();
 		if(EsSolucion()){
 			$tabla = CrearTablaCalculada();
-			AgregarNuevaTabla($tabla, "Tabla Final");
+			AgregarNuevaTabla($tabla, "Tabla final");
 		}
 		BuscarPibotCol();
 		CalcularTitas();
@@ -548,18 +548,18 @@
 	}
 
 	
-	
-	//echo $var."<br>";
-	echo "<br><pre>";
-	//print_r($_SESSION['matcalc']);
-	//print_r($_SESSION['BCBs']);
-	//print_r($_SESSION);
-	echo "</pre>";
-
 	//Muestro las tablas.
 	for($i=0; $i<count($_SESSION['tablas']); $i++){
 		echo $_SESSION['tablas'][$i];
 	}
+	
+	//echo $var."<br>";
+	echo "<br><pre>";
+	//print_r($_SESSION['matcalc']);
+	print_r($_SESSION['fo']);
+	//print_r($_SESSION);
+	echo "</pre>";
+
 
 
 ?>
