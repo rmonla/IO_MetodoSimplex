@@ -18,210 +18,201 @@
 ?>
 
 <?php   //Inicializo Variables  
-	global $vbles, $rnes, $metodo;
-	global $fo, $restricciones;
-	global $mat, $mat_Fs, $mat_Cs;
-	global $tablas;
-	global $BCBs, $ztas, $cjzjs;
-	global $pibot_col, $pibot_fila;
-	global $titas;
-	
-	$tablas = array();
 	
 	//Cargo los valores que traen las variables desde la página anterior.
-	$vbles = $_POST["vbles"];
-	$rnes = $_POST["rnes"];
-	$metodo = $_POST["objetivo"];
-	
-	
+	$_SESSION['vbles'] = $_POST["vbles"];
+	$_SESSION['rnes'] = $_POST["rnes"];
+	$_SESSION['metodo'] = $_POST["objetivo"];
+	//echo $_SESSION['metodo'];
 	/*
-	echo $vbles;
-	echo $rnes;
-	echo $metodo;
+	echo $_SESSION['vbles'];
+	echo $_SESSION['rnes'];
+	echo $_SESSION['metodo'];
 	*/
 	
 /*	echo '<pre>';
-	print_r($restricciones);
-	//print_r($restricciones);
+	print_r($_SESSION['matrnes']);
+	//print_r($_SESSION['matrnes']);
 	echo '</pre>';
 */	
 	
 ?>
 
 <?php   //Funciones
-	function CargarMatrisFO(&$fo, $_POST, $vbles, $rnes){
+	function CargarMatrisFO($_POST){
 		//Creo y cargo el array de las x y las s de la funcion objetivo.
-		for($i=1; $i<=$vbles; $i++){  //Cargo las x.
+		for($i=1; $i<=$_SESSION['vbles']; $i++){  //Cargo las x.
 			$var = "lbl";
-			$fo[$var][$i] = "X".$i;
+			$_SESSION['fo'][$var][$i] = "X".$i;
 			$var = "X".$i;
 			if(isset($_POST[$var])){
 				$valor = $_POST[$var];
 			}
-			$fo[$var] = $valor;
+			$_SESSION['fo'][$var] = $valor;
 		}
-		for($j=1; $j<=$rnes; $j++){  //Inicializo las s.	
+		for($j=1; $j<=$_SESSION['rnes']; $j++){  //Inicializo las s.	
 			$var = "lbl";
-			$fo[$var][$i] = "S".$j;
+			$_SESSION['fo'][$var][$i] = "S".$j;
 			$var = "S".$j;
-			$fo[$var] = "0";
+			$_SESSION['fo'][$var] = "0";
 			$i++;
 		}
 	}
 	
-	function CargarMatrisRnes(&$restricciones, $_POST, $vbles, $rnes){
+	function CargarMatrisRnes($_POST){
 		//Creo y cargo el array de las restricciones.
-		$restricciones = array();
-		for($j=1; $j<=$rnes; $j++){
-			for($i=1; $i<=$vbles; $i++){  //Cargo las a desde la POST
+		$_SESSION['matrnes'] = array();
+		for($j=1; $j<=$_SESSION['rnes']; $j++){
+			for($i=1; $i<=$_SESSION['vbles']; $i++){  //Cargo las a desde la POST
 				$var = "X".$j.$i;
 				if(isset($_POST[$var])){
 					$valor = $_POST[$var];
 				}
-				$restricciones[$var] = $valor;
+				$_SESSION['matrnes'][$var] = $valor;
 			}
-			for($i=1; $i<=$rnes; $i++){  //Inizializo las s.
+			for($i=1; $i<=$_SESSION['rnes']; $i++){  //Inizializo las s.
 				$valor = "0";
 				$var = "S".$j.$i;
 				if($j == $i){
 					$valor = "1";
 				}
-				$restricciones[$var] = $valor;
+				$_SESSION['matrnes'][$var] = $valor;
 			}
 			$valor = "0";
 			$var = "Y".$j;
 			if(isset($_POST[$var])){
 				$valor = $_POST[$var];
 			}
-			$restricciones[$var] = $valor;
+			$_SESSION['matrnes'][$var] = $valor;
 		}
 	}
 
-	function CargarMatrisDeCalculos(&$mat, &$mat_Fs, &$mat_Cs, $rnes, $vbles, $restricciones){
-		for($j=1; $j<=$rnes; $j++){
+	function CargarMatrisDeCalculos(){
+		for($j=1; $j<=$_SESSION['rnes']; $j++){
 			$var_a = "a".$j;
-			for($i=1; $i<=$vbles; $i++){
+			for($i=1; $i<=$_SESSION['vbles']; $i++){
 				$var_rnes = "X".$j.$i;
-				$mat[$var_a][$i] = $restricciones[$var_rnes];
+				$_SESSION['matcalc'][$var_a][$i] = $_SESSION['matrnes'][$var_rnes];
 			}
-			for($m=1; $m<=$rnes; $m++){
+			for($m=1; $m<=$_SESSION['rnes']; $m++){
 				$var_rnes = "S".$j.$m;
-				$mat[$var_a][$i] = $restricciones[$var_rnes];
+				$_SESSION['matcalc'][$var_a][$i] = $_SESSION['matrnes'][$var_rnes];
 				$i++;
 			}
 			$var_rnes = "Y".$j;
-			$mat[$var_a][$i] = $restricciones[$var_rnes];
+			$_SESSION['matcalc'][$var_a][$i] = $_SESSION['matrnes'][$var_rnes];
 		}
 		$var = "a1";
-		$mat_Fs = count($mat);
-		$mat_Cs = count($mat[$var]);
+		$_SESSION['mat_Fs'] = count($_SESSION['matcalc']);
+		$_SESSION['mat_Cs'] = count($_SESSION['matcalc'][$var]);
 	}
 
-	function CargarMatrisBasesCBs(&$BCBs, $rnes){
-		for($i=1; $i<=$rnes; $i++){
+	function CargarMatrisBasesCBs(){
+		for($i=1; $i<=$_SESSION['rnes']; $i++){
 				$var = "lbl";
 				$val_lbl = "S".$i;
-				$BCBs[$var][$i] = $val_lbl;
-				//$BCBs[$val_lbl] = 0;
+				$_SESSION['BCBs'][$var][$i] = $val_lbl;
+				//$_SESSION['BCBs'][$val_lbl] = 0;
 			}
-		for($j=1; $j<=$rnes; $j++){
+		for($j=1; $j<=$_SESSION['rnes']; $j++){
 				$var = "lbl";
 				$val_lbl = "CB".$j;
-				$BCBs[$var][$i++] = $val_lbl;
-				$BCBs[$val_lbl] = 0;
+				$_SESSION['BCBs'][$var][$i++] = $val_lbl;
+				$_SESSION['BCBs'][$val_lbl] = 0;
 			}
 	
-	$BCBs["CB1"] = 1;
-	$BCBs["CB2"] = 1;
-	$BCBs["CB3"] = 1;
+	
+	$_SESSION['BCBs']["CB1"] = 1;
+	$_SESSION['BCBs']["CB2"] = 1;
+	$_SESSION['BCBs']["CB3"] = 1;
+	
 
 	}
 	
-	function CalcularZtas(&$ztas, $BCBs, $mat, $mat_Fs, $mat_Cs){
-		for($j=1; $j<=$mat_Fs; $j++){
+	function CalcularZtas(){
+		for($j=1; $j<=$_SESSION['mat_Fs']; $j++){
 			$var_cb = "CB".$j;
 			$var_a = "a".$j; 
-			for($i=1; $i<=$mat_Cs; $i++){
+			for($i=1; $i<=$_SESSION['mat_Cs']; $i++){
 				$var_z = "Z".$i;
-				//echo $var_z.' ( '.$ztas[$var_z].' ) + ('.$var_cb.' ( '.$BCBs[$var_cb].' ) * '.$var_a.$i.'( '.$mat[$var_a][$i].') ) = ';
-				$ztas[$var_z] = $ztas[$var_z] + ($BCBs[$var_cb] * $mat[$var_a][$i]);
-				//echo $ztas[$var_z].'<br>';
+				//echo $var_z.' ( '.$_SESSION['ztas'][$var_z].' ) + ('.$var_cb.' ( '.$_SESSION['BCBs'][$var_cb].' ) * '.$var_a.$i.'( '.$_SESSION['matcalc'][$var_a][$i].') ) = ';
+				$_SESSION['ztas'][$var_z] = $_SESSION['ztas'][$var_z] + ($_SESSION['BCBs'][$var_cb] * $_SESSION['matcalc'][$var_a][$i]);
+				//echo $_SESSION['ztas'][$var_z].'<br>';
 			}
 		}
 	}
 
 	//Creo y cargo el array de czs las diferencias Cj-Zj.
-	function CalcularCjZjs(&$cjzjs, $ztas, $mat_Cs, $fo){
-		for($i=1; $i<=$mat_Cs; $i++){
+	function CalcularCjZjs(){
+		for($i=1; $i<=$_SESSION['mat_Cs']; $i++){
 			$var_cjzj = "CZ".$i;
 			$var_z = "Z".$i;
-			$var_fo = $fo["lbl"][$i];
-			//echo $var_fo .' ( '. $fo[$var_fo] .' ) - '. $var_z .'( '.$ztas[$var_z] .' ) = ';
-			$cjzjs[$var_cjzj] = $fo[$var_fo] - $ztas[$var_z];
-			//echo $cjzjs[$var_cjzj].'<br>';
+			$var_fo = $_SESSION['fo']["lbl"][$i];
+			//echo $var_fo .' ( '. $_SESSION['fo'][$var_fo] .' ) - '. $var_z .'( '.$_SESSION['ztas'][$var_z] .' ) = ';
+			$_SESSION['cjzjs'][$var_cjzj] = $_SESSION['fo'][$var_fo] - $_SESSION['ztas'][$var_z];
+			//echo $_SESSION['cjzjs'][$var_cjzj].'<br>';
 		}
 	}
 
 	//Busco y guardo la columna del pibot.
-	function BuscarPibotCol(&$pibot_col, $cjzjs){
-		$valor_cz = $cjzjs["CZ1"];
-		$pibot_col = 0;
-		for($i=1; $i<=count($cjzjs); $i++){
+	function BuscarPibotCol(){
+		$valor_cz = $_SESSION['cjzjs']["CZ1"];
+		$_SESSION['pibot_col'] = 0;
+		for($i=1; $i<=count($_SESSION['cjzjs']); $i++){
 			$var = "CZ".$i;
-			if($cjzjs[$var] >= 0){
-				if($cjzjs[$var] >= $valor_cz){
-					$valor_cz = $cjzjs[$var];
-					$pibot_col = $i;	
+			if($_SESSION['cjzjs'][$var] >= 0){
+				if($_SESSION['cjzjs'][$var] >= $valor_cz){
+					$valor_cz = $_SESSION['cjzjs'][$var];
+					$_SESSION['pibot_col'] = $i;	
 				}
 			}
 		}
 	}
 
 	//Calculo los coeficientes tita.
-	function CalcularTitas(&$titas, $pibot_col, $mat, $mat_Fs, $mat_Cs){
-		for($i=1; $i<=$mat_Fs; $i++){
+	function CalcularTitas(){
+		for($i=1; $i<=$_SESSION['mat_Fs']; $i++){
 			$var = "a".$i;
-			$val_vld = $mat[$var][$mat_Cs];
-			$val_pb = $mat[$var][$pibot_col];
+			$val_vld = $_SESSION['matcalc'][$var][$_SESSION['mat_Cs']];
+			$val_pb = $_SESSION['matcalc'][$var][$_SESSION['pibot_col']];
 			$var = "tita".$i;
-			$titas[$var] = "-1";
+			$_SESSION['titas'][$var] = "-1";
 			if($val_pb != 0){
-				$titas[$var] = $val_vld / $val_pb;	
+				$_SESSION['titas'][$var] = $val_vld / $val_pb;	
 			}
 		}
 	}
 
 	//Busco y guardo la fila del pibot.
-	function BuscarPibotFila(&$pibot_fila, $titas){
+	function BuscarPibotFila(){
 		//Busco la Fila.
-		$valor_tita = $titas["tita1"];
-		$pibot_fila = 0;
-		for($i=1; $i<=count($titas); $i++){
+		$valor_tita = $_SESSION['titas']["tita1"];
+		$_SESSION['pibot_fila'] = 0;
+		for($i=1; $i<=count($_SESSION['titas']); $i++){
 			$var = "tita".$i;
-			if($titas[$var] <= $valor_tita and $titas[$var] != -1){
-				$valor_tita = $titas[$var];
-				$pibot_fila = $i;	
+			if($_SESSION['titas'][$var] <= $valor_tita and $_SESSION['titas'][$var] != -1){
+				$valor_tita = $_SESSION['titas'][$var];
+				$_SESSION['pibot_fila'] = $i;	
 			}
 		}
 	}
 
 	//Función que coloca el color a la celda segun pibot.
-	function ColorCelda($fila, $col, $pibot_fila, $pibot_col){
+	function ColorCelda($fila, $col){
 		$color = '';
-		if($fila == $pibot_fila) $color = ' bgcolor="#00CCFF"';
-		if($col == $pibot_col) $color = ' bgcolor="#99FF00"';
-		if($fila == $pibot_fila and $col == $pibot_col) $color = ' bgcolor="#009933"';
+		if($fila == $_SESSION['pibot_fila']) $color = ' bgcolor="#00CCFF"';
+		if($col == $_SESSION['pibot_col']) $color = ' bgcolor="#99FF00"';
+		if($fila == $_SESSION['pibot_fila'] and $col == $_SESSION['pibot_col']) $color = ' bgcolor="#009933"';
 		$abro_td = '<td width="45"'. $color. '><div align="center">';
 		return $abro_td;
 	}
 	
-	function AgregarNuevaTabla(&$tablas, $tabla, $titulo){
-		$id = count($tablas);
-		$tablas[$id] = '<h1 align="center">'. $titulo. '</h1>'. $tabla;;
-		//echo $tablas[$id];
+	function AgregarNuevaTabla($tabla, $titulo){
+		$id = count($_SESSION['tablas']);
+		$_SESSION['tablas'][$id] = '<h1 align="center">'. $titulo. '</h1>'. $tabla. '<br>';
 	}
 	
-	function CrearTablaFormulas(&$tablas, $metodo, $vbles, $rnes, $fo, $restricciones){
+	function CrearTablaFormulas(){
 		$tabla = '<table border="0" align="center">';
 			$tabla.= '<tr>';
 				$tabla.= '<td>';
@@ -237,23 +228,23 @@
 								//Construyo y muestro la función objetivo.
 								//--Formula
 								$celdas = '<td align="center">';
-									$formula = $metodo .' Z = ';
-									for($i=1; $i<=$vbles; $i++){
+									$formula = $_SESSION['metodo'] .' Z = ';
+									for($i=1; $i<=$_SESSION['vbles']; $i++){
 										$signo = ' + ';
 										if ($i == 1) $signo = '';
 										$var = "lbl";
-										$var_lbl = $fo[$var][$i];
-										$formula.= $signo. $fo[$var_lbl] .' X<sub>'. $i .'</sub>';
+										$var_lbl = $_SESSION['fo'][$var][$i];
+										$formula.= $signo. $_SESSION['fo'][$var_lbl] .' X<sub>'. $i .'</sub>';
 									}
 									$celdas.=$formula;
 								$celdas.='</td>';
 								//--Formula + Holguras
 								$celdas.='<td align="center">';
-									for ($j=1; $j<=$rnes; $j++){
+									for ($j=1; $j<=$_SESSION['rnes']; $j++){
 										$signo = ' + ';
 										$var = "lbl";
-										$var_lbl = $fo[$var][$i++];
-										$formula.= $signo.$fo[$var_lbl] .' S<sub>'. $j .'</sub>';
+										$var_lbl = $_SESSION['fo'][$var][$i++];
+										$formula.= $signo.$_SESSION['fo'][$var_lbl] .' S<sub>'. $j .'</sub>';
 									}
 									$celdas.=$formula;
 								$celdas.='</td>';
@@ -262,27 +253,27 @@
 							//Construyo y muestro las resticciones.
 							$filas = '';
 							$celdas = '';
-							for($j=1; $j<=$rnes; $j++){
+							for($j=1; $j<=$_SESSION['rnes']; $j++){
 								$filas.= '<tr>';
 									$celdas = '<th scope="row"><div align="left">Restricci&oacute;n '. $j .' </div></th>';
 									//---Formula
 									$celdas.= '<td align="center">';
 										$var = "X".$j."1";
-										$formula = $restricciones[$var] .' X<sub>1</sub>';
-										for($i=2; $i<=$vbles; $i++){
+										$formula = $_SESSION['matrnes'][$var] .' X<sub>1</sub>';
+										for($i=2; $i<=$_SESSION['vbles']; $i++){
 											$var ="X".$j.$i;
-											$formula.= ' + '. $restricciones[$var] .' X<sub>'. $i .'</sub>';
+											$formula.= ' + '. $_SESSION['matrnes'][$var] .' X<sub>'. $i .'</sub>';
 										}
 										$celdas.= $formula;
 										$celdas.= ' <= '; //sigon celdas para usar formula despues.
 										$var = "Y".$j;
-										$celdas.= $restricciones[$var];
+										$celdas.= $_SESSION['matrnes'][$var];
 									$celdas.='</td>';
 									//---Formula + Holguras
 									$celdas.='<td align="center">';
 										$formula.=' + 1 S<sub>'. $j .'</sub>';
 										$var = "Y".$j;
-										$formula.= ' = '. $restricciones[$var];
+										$formula.= ' = '. $_SESSION['matrnes'][$var];
 										$celdas.= $formula;
 									$celdas.='</td>';
 								$filas.= $celdas;
@@ -300,15 +291,15 @@
 						$tabla.= '<tr>';
 							$celdas = '<td><p>Variables B&aacute;sicas:';
 								$vbles_basicas = '<br>';
-								for($j=1; $j<=$rnes; $j++){
+								for($j=1; $j<=$_SESSION['rnes']; $j++){
 									$var = "Y".$j;
-									$vbles_basicas.= 'S<sub>'. $j .'</sub> = '. $restricciones[$var] .'<br>';
+									$vbles_basicas.= 'S<sub>'. $j .'</sub> = '. $_SESSION['matrnes'][$var] .'<br>';
 								}
 							$celdas.= $vbles_basicas .'</p></td>';
 						$tabla.= $celdas;
 							$celdas = '<td><p>Variables No B&aacute;sicas:';
 								$vbles_No_basicas = '<br>';
-								for($i=1; $i<=$vbles; $i++){
+								for($i=1; $i<=$_SESSION['vbles']; $i++){
 									$var = "x".$i;
 									$vbles_No_basicas.= 'X<sub>'. $i .'</sub> = 0<br>';
 								}
@@ -319,12 +310,11 @@
 				$tabla.= '<td>';
 			$tabla.= '</tr>';
 		$tabla.= '</table>';
-	
-	AgregarNuevaTabla($tablas, $tabla, "Tabla de Formulas");
+	return $tabla;
 	}
 
 	//Función que crea y arma la tabla calculada.
-	function CrearTablaCalculada($vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs, $BCBs, $mat, $ztas, $cjzjs, $titas){
+	function CrearTablaCalculada(){
 		//Formatos de td e imput.
 		$abro_td = '<td width="45"><div align="center">';
 		$cierro_td = '</div></td>';
@@ -336,12 +326,12 @@
 					.'<td colspan="2"></td>';
 					$celdas ='';
 					//lbl Variables x
-					for($i=1; $i<=$vbles; $i++){
-						$abro_td = ColorCelda(1, $i, $pibot_fila, $pibot_col);
+					for($i=1; $i<=$_SESSION['vbles']; $i++){
+						$abro_td = ColorCelda(1, $i);
 						$celdas.= $abro_td.' X<sub>'.$i.'</sub>'.$cierro_td;
 					}
 					//lbl Variables s
-					for($j=1; $j<=$rnes; $j++){
+					for($j=1; $j<=$_SESSION['rnes']; $j++){
 						$abro_td = '<td width="45"><div align="center">';
 						$celdas.= $abro_td .'S<sub>'.$j.'</sub>'.$cierro_td;
 					}
@@ -352,16 +342,16 @@
 					.'<th bgcolor="#999999">C<sub>B</sub></th>';
 					$celdas ='';
 					//Variables x
-					for($i=1; $i<=$vbles; $i++){
+					for($i=1; $i<=$_SESSION['vbles']; $i++){
 						$var = "X".$i;
-						$abro_td = ColorCelda(1, $i, $pibot_fila, $pibot_col);
-						$celdas.= $abro_td .' '. $fo[$var] .' '. $cierro_td;
+						$abro_td = ColorCelda(1, $i);
+						$celdas.= $abro_td .' '. $_SESSION['fo'][$var] .' '. $cierro_td;
 					}
 					//Variables s
-					for($j=1; $j<=$rnes; $j++){
+					for($j=1; $j<=$_SESSION['rnes']; $j++){
 						$var = "S".$i;
 						$abro_td = '<td width="45"><div align="center">';
-						$celdas.= $abro_td .' '. $fo[$var] .' '. $cierro_td;
+						$celdas.= $abro_td .' '. $_SESSION['fo'][$var] .' '. $cierro_td;
 					}
 					$tabla.= $celdas;
 					$tabla.= '<th bgcolor="#999999">VLD</th>';
@@ -369,26 +359,26 @@
 		$tabla.= '</tr>';
 				//Creo y armo las filas de calculos.
 				$filas = '';
-				for($j=1; $j<=$mat_Fs; $j++){
+				for($j=1; $j<=$_SESSION['mat_Fs']; $j++){
 					$filas.= "<tr>";
 					
-					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
+					$abro_td = ColorCelda($j, -1);
 					$var = "lbl";
-					$filas.= $abro_td .' '. $BCBs[$var][$j] .' '. $cierro_td; 
+					$filas.= $abro_td .' '. $_SESSION['BCBs'][$var][$j] .' '. $cierro_td; 
 					
-					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
+					$abro_td = ColorCelda($j, -1);
 					$var = "CB".$j;
-					$filas.= $abro_td .' '. $BCBs[$var] .' '. $cierro_td;
+					$filas.= $abro_td .' '. $_SESSION['BCBs'][$var] .' '. $cierro_td;
 					
-					for($i=1; $i<=$mat_Cs; $i++){
-						$abro_td = ColorCelda($j, $i, $pibot_fila, $pibot_col);
+					for($i=1; $i<=$_SESSION['mat_Cs']; $i++){
+						$abro_td = ColorCelda($j, $i);
 						$var = "a".$j;
-						$filas.= $abro_td .' '. $mat[$var][$i] .' '. $cierro_td;
+						$filas.= $abro_td .' '. $_SESSION['matcalc'][$var][$i] .' '. $cierro_td;
 					}
 
-					$abro_td = ColorCelda($j, -1, $pibot_fila, $pibot_col);
+					$abro_td = ColorCelda($j, -1);
 					$var = "tita".$j;
-					$filas.= $abro_td .' '. $titas[$var] .' '. $cierro_td;
+					$filas.= $abro_td .' '. $_SESSION['titas'][$var] .' '. $cierro_td;
 					
 					$filas.= "</tr>";
 				}
@@ -399,9 +389,9 @@
 					//Creo y armo las ztas.
 					$celdas ='';
 					$abro_td = '<td width="45"><div align="center">';
-					for($i=1; $i<=count($ztas); $i++){
+					for($i=1; $i<=count($_SESSION['ztas']); $i++){
 						$var = "Z".$i;
-						$celdas.= $abro_td . $ztas[$var] . $cierro_td;
+						$celdas.= $abro_td . $_SESSION['ztas'][$var] . $cierro_td;
 					}
 					$tabla.= $celdas;
 		$tabla.= '</tr>';
@@ -410,9 +400,9 @@
 					$celdas ='';
 					$abro_td = '<td width="45"><div align="center">';
 					//Creo y armo las Cj-Zj.
-					for($i=1; $i<count($cjzjs); $i++){
+					for($i=1; $i<count($_SESSION['cjzjs']); $i++){
 						$var = "CZ".$i;
-						$celdas.= $abro_td .' '. $cjzjs[$var] .' '. $cierro_td;
+						$celdas.= $abro_td .' '. $_SESSION['cjzjs'][$var] .' '. $cierro_td;
 					}
 					$tabla.= $celdas;
 		$tabla.= '</tr>';
@@ -425,41 +415,34 @@
 ?>
 
 <?php   //Area de impresión. 
-	/*
-	$id = count($tablas) + 1;
-	$tablas[$id] = CrearTablaFormulas($metodo, $vbles, $rnes, $fo, $restricciones);
+	CargarMatrisFO($_POST);
+	CargarMatrisRnes($_POST);
+	CargarMatrisDeCalculos();
+	CargarMatrisBasesCBs();
+
+	$tabla = CrearTablaFormulas();
+	AgregarNuevaTabla($tabla, "Tabla de Formulas");
+
+	CalcularZtas();	
+	CalcularCjZjs();
+	BuscarPibotCol();
+	CalcularTitas();
+	BuscarPibotFila();
 	
-	for($i=0; $i<$id; $i++){
-		echo $tablas[$i];
-	}
-	*/
-	CargarMatrisFO($fo, $_POST, $vbles, $rnes);
-	CargarMatrisRnes($restricciones, $_POST, $vbles, $rnes);
-	CargarMatrisDeCalculos($mat, $mat_Fs, $mat_Cs, $rnes, $vbles, $restricciones);
-	CargarMatrisBasesCBs($BCBs, $rnes);
+	$tabla = CrearTablaCalculada();
+	AgregarNuevaTabla($tabla, "Tabla inicial de c&aacute;lculos");
+	//$var = count($_SESSION['tablas']);
 
-	CrearTablaFormulas($tablas, $metodo, $vbles, $rnes, $fo, $restricciones);
-
-	CalcularZtas($ztas, $BCBs, $mat, $mat_Fs, $mat_Cs);	
-	CalcularCjZjs($cjzjs, $ztas, $mat_Cs, $fo);
-	BuscarPibotCol($pibot_col, $cjzjs);
-	CalcularTitas($titas, $pibot_col, $mat, $mat_Fs, $mat_Cs);
-	BuscarPibotFila($pibot_fila, $titas);
-	
-	$tabla = CrearTablaCalculada($vbles, $rnes, $fo, $pibot_fila, $pibot_col, $mat_Fs, $mat_Cs, $BCBs, $mat, $ztas, $cjzjs, $titas);
-	AgregarNuevaTabla($tablas, $tabla, "Tabla de Calculada Inicial");
-	//$var = count($tablas);
-
-	echo $pibot_fila."<br>";
+	//echo $_SESSION['mat_Cs']."<br>";
 	echo "<br><pre>";
 	//print_r($fo);
-	//print_r($ztas);
-	print_r($cjzjs);
+	//print_r($_SESSION['ztas']);
+	//print_r($_SESSION);
 	echo "</pre>";
 
 	//Muestro las tablas.
-	for($i=0; $i<count($tablas); $i++){
-		echo $tablas[$i];
+	for($i=0; $i<count($_SESSION['tablas']); $i++){
+		echo $_SESSION['tablas'][$i];
 	}
 
 
