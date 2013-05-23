@@ -476,7 +476,25 @@
 		$_SESSION['BCBs'][$var][$p_fila] = $lbl_entra;
 		$_SESSION['BCBs'][$val_sale] = $val_entra;
 	}
-	
+
+	//Busco si es solución.
+	function EsSolucion(){
+		/*
+		CalcularZtas();	
+		CalcularCjZjs();
+		BuscarPibotCol();
+		CalcularTitas();
+		BuscarPibotFila();
+		*/
+		$essolucion = 1;
+		for($i=0; $i<count($_SESSION['cjzjs']); $i++){
+			$var = "CZ".$i;
+			//echo $_SESSION['cjzjs'][$var]."<br>";
+			if($_SESSION['cjzjs'][$var]> 0) $essolucion = 0;
+		}
+		echo $essolucion." sol <br>";
+		return $essolucion;
+	}
 ?>
 
 <?php   //Area de impresión. 
@@ -501,25 +519,34 @@
 	//while()
 	$var = ValorPibot();
 	
-	while( $_SESSION['pibot_col'] > 0 and $corte < 10){
-		if ( ValorPibot() > 0){
+	while( !EsSolucion() and $corte < 10){
+		//echo $_SESSION['pibot_col']."<-- Col Pibot<br>";
+		//echo $corte."<-- Corte<br>";
+		if ( ValorPibot() > 1){
 			CalcularValoresFilaPibot();
 			$tabla = CrearTablaCalculada();
-			AgregarNuevaTabla($tabla, "Calculo de los valores de la fila pibot");
+			AgregarNuevaTabla($tabla, "Calculo fila pibot");
+		}else{
+			AgregarNuevaTabla('', "<h2>No se calculó fila por valor pibot = 1 </h2>");
 		}
 		CalcularValoresNoPibot();
 		$tabla = CrearTablaCalculada();
-		AgregarNuevaTabla($tabla, "Cálculo de los valores distintos al pibot");
+		AgregarNuevaTabla($tabla, "Calculo valores distintos al pibot");
 		EntraSale();
+		$tabla = CrearTablaCalculada();
+		AgregarNuevaTabla($tabla, "Agrego las variables que entran");
 		CalcularZtas();	
 		CalcularCjZjs();
+		if(EsSolucion()){
+			$tabla = CrearTablaCalculada();
+			AgregarNuevaTabla($tabla, "Tabla Final");
+		}
 		BuscarPibotCol();
 		CalcularTitas();
 		BuscarPibotFila();
-		$tabla = CrearTablaCalculada();
-		AgregarNuevaTabla($tabla, "Entran las nuevas variables y busco el nuevo pibot");
 		$corte++;
 	}
+
 	
 	
 	//echo $var."<br>";
@@ -535,7 +562,7 @@
 	}
 
 
-	?>
+?>
 
 <?php   //Cierro <body>
 	$body.='</body>';
