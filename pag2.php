@@ -492,7 +492,7 @@
 			//echo $_SESSION['cjzjs'][$var]."<br>";
 			if($_SESSION['cjzjs'][$var]> 0) $essolucion = 0;
 		}
-		echo $essolucion." sol <br>";
+		//echo $essolucion." sol <br>";
 		return $essolucion;
 	}
 ?>
