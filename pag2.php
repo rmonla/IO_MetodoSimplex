@@ -121,11 +121,11 @@
 				$_SESSION['BCBs'][$val_lbl] = 0;
 			}
 	
-	
+	/*
 	$_SESSION['BCBs']["CB1"] = 1;
 	$_SESSION['BCBs']["CB2"] = 1;
 	$_SESSION['BCBs']["CB3"] = 1;
-	
+	*/
 
 	}
 	
@@ -464,7 +464,19 @@
 		}
 	}
 
-
+	//Ingreso los valores de base y cb desde fo.
+	function EntraSale(){
+		$p_col = $_SESSION['pibot_col'];
+		$p_fila = $_SESSION['pibot_fila'];
+		$var = "lbl";
+		$lbl_entra = $_SESSION['fo'][$var][$p_col];
+		$val_entra = $_SESSION['fo'][$lbl_entra];
+		$var = "lbl";
+		$val_sale = "CB".$p_fila;
+		$_SESSION['BCBs'][$var][$p_fila] = $lbl_entra;
+		$_SESSION['BCBs'][$val_sale] = $val_entra;
+	}
+	
 ?>
 
 <?php   //Area de impresión. 
@@ -489,21 +501,31 @@
 	//while()
 	$var = ValorPibot();
 	
-	if( ValorPibot() > 0){
-		CalcularValoresFilaPibot();
-		$tabla = CrearTablaCalculada();
-		AgregarNuevaTabla($tabla, "Calculo de los valores de la fila pibot");
+	while( $_SESSION['pibot_col'] > 0 and $corte < 10){
+		if ( ValorPibot() > 0){
+			CalcularValoresFilaPibot();
+			$tabla = CrearTablaCalculada();
+			AgregarNuevaTabla($tabla, "Calculo de los valores de la fila pibot");
+		}
 		CalcularValoresNoPibot();
 		$tabla = CrearTablaCalculada();
-		AgregarNuevaTabla($tabla, "Calculo de los valores distintos al pibot");
-		
+		AgregarNuevaTabla($tabla, "Cálculo de los valores distintos al pibot");
+		EntraSale();
+		CalcularZtas();	
+		CalcularCjZjs();
+		BuscarPibotCol();
+		CalcularTitas();
+		BuscarPibotFila();
+		$tabla = CrearTablaCalculada();
+		AgregarNuevaTabla($tabla, "Entran las nuevas variables y busco el nuevo pibot");
+		$corte++;
 	}
 	
 	
 	//echo $var."<br>";
 	echo "<br><pre>";
 	//print_r($_SESSION['matcalc']);
-	//print_r($_SESSION['ztas']);
+	//print_r($_SESSION['BCBs']);
 	//print_r($_SESSION);
 	echo "</pre>";
 
