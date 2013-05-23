@@ -421,6 +421,32 @@
 		return $tabla;
 	}
 
+	//Creo la tabla de resultados finales.
+	function CrearTablaResultados(){
+		$tabla = '<table border="1" align="center">';
+			$tabla.= '<tr>';
+			$tabla.= '<th scope="col">Resultados</th>';
+			$tabla.= '</tr>';
+			$tabla.= '<tr>';
+			$tabla.= '<td><div align="center">';
+			$cols_fo = count($_SESSION['fo']['lbl']);
+			for($j=1; $j<=$cols_fo; $j++){
+				$var_fo = $_SESSION['fo']['lbl'][$j];
+				$cols_BCBs = count($_SESSION['BCBs']['lbl']);
+				for($i=1; $i<$cols_BCBs; $i++){
+					$val_fo = 0;
+					$fila = 0;
+					if($var_fo == $_SESSION['BCBs']['lbl'][$i]) $fila = $i;
+					
+				}
+			}
+			
+			$tabla.= 'X1 = 1.5';
+			$tabla.= '</div></td>';
+			$tabla.= '</tr>';
+		$tabla.= '</table>';
+	}
+	
 	//Calculo la fila del Pibot a 1.
 	function CalcularValoresFilaPibot(){
 		$fila = $_SESSION['pibot_fila'];
@@ -555,8 +581,11 @@
 	
 	//echo $var."<br>";
 	echo "<br><pre>";
+	//print_r($_SESSION['fo']);
+	//print_r($_SESSION['matrnes']);
 	//print_r($_SESSION['matcalc']);
-	print_r($_SESSION['fo']);
+	//print_r($_SESSION['BCBs']);
+	//print_r($_SESSION['matrnes']);
 	//print_r($_SESSION);
 	echo "</pre>";
 
