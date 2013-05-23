@@ -197,6 +197,16 @@
 		}
 	}
 
+	//Obtengo el valor del pibot.
+	function ValorPibot(){
+		$fila = $_SESSION['pibot_fila'];
+		$col = $_SESSION['pibot_col'];
+		$var = "a".$fila;
+		$val_pibot = $_SESSION['matcalc'][$var][$col];
+		//echo $val_pibot;
+		return $val_pibot;
+	}
+	
 	//Función que coloca el color a la celda segun pibot.
 	function ColorCelda($fila, $col){
 		$color = '';
@@ -411,6 +421,20 @@
 		return $tabla;
 	}
 
+	//Calculo la fila del Pibot a 1.
+	function CalcularFilaPibot(){
+		$fila = $_SESSION['pibot_fila'];
+		$col = $_SESSION['pibot_col'];
+		$var = "a".$fila;
+		$pibot = ValorPibot();
+		$cols = $_SESSION['mat_Cs'];
+		if($pibot != 1){
+			for($i=1; $i<=$cols; $i++){
+				$_SESSION['matcalc'][$var][$i] = $_SESSION['matcalc'][$var][$i] / $pibot;
+			}
+		}
+	}
+
 
 ?>
 
@@ -433,9 +457,18 @@
 	AgregarNuevaTabla($tabla, "Tabla inicial de c&aacute;lculos");
 	//$var = count($_SESSION['tablas']);
 
-	//echo $_SESSION['mat_Cs']."<br>";
+	//while()
+	$var = ValorPibot();
+	
+	if( ValorPibot() > 0){
+		CalcularFilaPibot();
+		$tabla = CrearTablaCalculada();
+		AgregarNuevaTabla($tabla, "Calculo de los valores de la fila pibot");
+	}
+	
+	//echo $var."<br>";
 	echo "<br><pre>";
-	//print_r($fo);
+	//print_r($_SESSION['matcalc']);
 	//print_r($_SESSION['ztas']);
 	//print_r($_SESSION);
 	echo "</pre>";
