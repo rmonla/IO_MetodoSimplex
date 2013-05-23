@@ -422,7 +422,7 @@
 	}
 
 	//Calculo la fila del Pibot a 1.
-	function CalcularFilaPibot(){
+	function CalcularValoresFilaPibot(){
 		$fila = $_SESSION['pibot_fila'];
 		$col = $_SESSION['pibot_col'];
 		$var = "a".$fila;
@@ -432,6 +432,35 @@
 			for($i=1; $i<=$cols; $i++){
 				$_SESSION['matcalc'][$var][$i] = $_SESSION['matcalc'][$var][$i] / $pibot;
 			}
+		}
+	}
+
+	//Calculo los valores de las demas componentes.
+	function CalcularValoresNoPibot(){
+		$p_fila = $_SESSION['pibot_fila'];
+		$p_col = $_SESSION['pibot_col'];
+		$filas = $_SESSION['mat_Fs'];
+		$cols = $_SESSION['mat_Cs'];
+		$pibot = ValorPibot();
+		
+		$var = "a".$p_fila;
+		for($j=1; $j<=$filas; $j++){
+			if($j != $p_fila){
+				for($i=1; $i<=$cols; $i++){
+					$var = "a".$j;
+					$val_comp_fila = $_SESSION['matcalc'][$var][$p_col];
+					if($val_comp_fila != 0){
+						if($i != $p_col){
+							$val_comp = $_SESSION['matcalc'][$var][$i];
+							$val_v = $_SESSION['matcalc'][$var][$p_col];
+							$var_2 = "a".$p_fila;
+							$val_h = $_SESSION['matcalc'][$var_2][$i];
+							$_SESSION['matcalc'][$var][$i] = ($val_comp * $pibot) - ($val_v * $val_h);
+						} 
+					}
+				}
+			}
+			$_SESSION['matcalc'][$var][$p_col] = 0;
 		}
 	}
 
@@ -461,10 +490,15 @@
 	$var = ValorPibot();
 	
 	if( ValorPibot() > 0){
-		CalcularFilaPibot();
+		CalcularValoresFilaPibot();
 		$tabla = CrearTablaCalculada();
 		AgregarNuevaTabla($tabla, "Calculo de los valores de la fila pibot");
+		CalcularValoresNoPibot();
+		$tabla = CrearTablaCalculada();
+		AgregarNuevaTabla($tabla, "Calculo de los valores distintos al pibot");
+		
 	}
+	
 	
 	//echo $var."<br>";
 	echo "<br><pre>";
